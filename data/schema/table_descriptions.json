@@ -1,0 +1,62 @@
+{
+    "netflix_titles": {
+        "description": "Listings of movies and tv shows on Netflix ",
+        "columns_name": {
+            "show_id": {
+                "description": "Unique ID for every Movie / Tv Show",
+                "example_data": ["s4869", "s8212", "s7520"]
+            },
+            "type": {
+                "description": "Identifier - A Movie or TV Show",
+                "example_data": ["Movie", "TV Show"]
+            },
+            "title": {
+                "description": "Title of the Movie / Tv Show",
+                "example_data": ["Marc Maron: End Times Fun", "Power Rangers Super Samurai", "The Returned"]
+            },
+            "director": {
+                "description": "Director of the Movie",
+                "example_data": ["Michael Blieden", "James Yukich", "Patricia Font"]
+            },
+            "cast": {
+                "description": "Actors involved in the movie / show",
+                "example_data": [
+                    "Rachel Crow, Ashleigh Murray, Sasheer Zamata, Danielle Nicolet, David Sullivan, Tim Blake Nelson, Missi Pyle, Arturo Castro, Sharon Lawrence, Brooke Markham, Kinna McInroe, Myko Olivier, Lance Gray", 
+                    "Garrett Ryan, Adam Hochstetter, Haley Tju, Brianne Tju, Jenna Ortega, Aaron Eisenberg, Celestial, Richard Balin",
+                    "Huma Qureshi, Siddharth, Rahul Khanna, Arif Zakaria, Seema Biswas, Sanjay Suri, Akash Khurana, Ashwath Bhatt, Anupam Bhattacharya, Adarsh Gourav"
+                ]
+            },
+            "country": {
+                "description": "Country where the movie / show was produced",
+                "example_data": ["Singapore, France", "United States, India, South Korea, China", "Venezuela"]
+            },
+            "date_added": {
+                "description": "Date it was added on Netflix",
+                "example_data": ["2017-09-04", "2021-02-02", "2021-08-27"]
+            },
+            "release_year": {
+                "description": "Actual Release year of the move / show",
+                "example_data": [2021, 1969, 2008]
+            },
+            "rating": {
+                "description": "TV Rating of the movie / show",
+                "example_data": ["TV-Y" ,"TV-Y7-FV" ,"TV-G" ,"TV-14" ,"TV-MA" ,"TV-Y7" ,"G" ,"NC-17" ,"PG" ,"TV-PG" ,"PG-13" ,"R" ,"UR" ,"NR"]
+            },
+            "duration": {
+                "description": "Total Duration - in minutes or number of seasons",
+                "example_data": ["1 Season", "123 min", "4 Seasons", "116 min"]
+            },
+            "listed_in": {
+                "description": "Genre",
+                "example_data": ["Dramas", "Thrillers", "Action & Adventure", "TV Dramas", "Horror Movies", "Romantic Movies"]
+            },
+            "description": {
+                "description": "The summary description",
+                "example_data": [
+                    "With different personalities, life goals and taste in men, five female college students become housemates in a shared residence called Belle Epoque.",
+                    "Desperate to meet his daughter, a convict cuts a deal by ratting out his old boss. Free and searching for his family, he must dodge a hit on his life."
+                ]
+            }
+        }
+    }
+}

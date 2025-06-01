@@ -1,0 +1,18 @@
+[
+    {
+        "question": "Show me all information of the latest 10 movie",
+        "query": "select * from netflix_titles where date_added is not null order by date_added desc limit 10"
+    },
+    {
+        "question": "Show me title, director, cast, and release year of netflix movies",
+        "query": "select title, director, cast, release_year from netflix_titles"
+    },
+    {
+        "question": "show me all information",
+        "query": "select * from netflix_titles where country similar to '%United States%|%United Kingdom%'"
+    },
+    {
+        "question": "Show me 10 random data from the database",
+        "query": "select * from netflix_titles order by random() limit 10"
+    }
+]

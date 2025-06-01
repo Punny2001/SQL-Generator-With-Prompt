@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>SQL Query Generator</title>
+{% endblock %}
+
+{% block body %}
+<body>
+    <div class="container">
+        <h1 class="title">General Text to SQL Query</h1>
+
+        <div class="input-section">
+            <form action="/" method="POST">
+                <label for="question" class="label">Enter your question:</label>
+                <textarea
+                    id="question" 
+                    rows="5"
+                    class="question"
+                    placeholder="e.g., Show me the title and director of all movies in the United States."></textarea>
+                <button
+                    id="generateBtn"
+                    class="generate-button">Generate SQL Query</button>
+            </form>
+        </div>
+
+        <div class="output-section">
+            <h2 class="subtitle">Generated SQL Query</h2>
+            <pre id="generatedQuery" class="code-block">
+                {% if query %}
+                {{ query }}
+                {% else %}
+                <span class="placeholder-text">SQL Query will be displayed here after generation</span>
+                {% endif %}
+            </pre>
+
+
+            <h2 class="subtitle">Query Results</h2>
+            {% if results|length < 1 and not error %}
+            <pre>
+                <span class="placeholder-text">Results from the database will be displayed here</span>
+            </pre>
+            {% elif results|length > 1 and not error %}
+            <table>
+                <tr>
+                    {% for column in results[0] %}
+                    <th>{{ column }}</th>
+                    {% endfor %}
+                </tr>
+                {% for row in results[1:102] %}
+                <tr>
+                    {% for data in row %}
+                    <td>{{ data }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <p class="error-text">Failed to execute the query: {{ error }}</span>
+            {% endif %}
+            {% if results|length > 100 %}
+            Show results only first 100 rows
+            {% endif %}
+        </div>
+    </div>
+</body>
+{% endblock %}
