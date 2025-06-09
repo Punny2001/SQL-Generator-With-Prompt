@@ -15,7 +15,7 @@
                 <textarea
                     id="question" 
                     rows="5"
-                    class="question"
+                    class="textarea-input"
                     placeholder="e.g., Show me the title and director of all movies in the United States."></textarea>
                 <button
                     id="generateBtn"
@@ -29,37 +29,39 @@
                 {% if query %}
                 {{ query }}
                 {% else %}
-                <span class="placeholder-text">SQL Query will be displayed here after generation</span>
+                <p class="placeholder-text">SQL Query will be displayed here after generation</p>
                 {% endif %}
             </pre>
 
 
             <h2 class="subtitle">Query Results</h2>
-            {% if results|length < 1 and not error %}
-            <pre>
-                <span class="placeholder-text">Results from the database will be displayed here</span>
-            </pre>
-            {% elif results|length > 1 and not error %}
-            <table>
-                <tr>
-                    {% for column in results[0] %}
-                    <th>{{ column }}</th>
+            <div class="results-container">
+                {% if results|length < 1 and not error %}
+                <pre>
+                    <p class="placeholder-text">Results from the database will be displayed here</p>
+                </pre>
+                {% elif results|length > 1 and not error %}
+                <table class="results-table">
+                    <tr>
+                        {% for column in results[0] %}
+                        <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                    {% for row in results[1:102] %}
+                    <tr>
+                        {% for data in row %}
+                        <td>{{ data }}</td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-                {% for row in results[1:102] %}
-                <tr>
-                    {% for data in row %}
-                    <td>{{ data }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </table>
-            {% else %}
-            <p class="error-text">Failed to execute the query: {{ error }}</span>
-            {% endif %}
-            {% if results|length > 100 %}
-            Show results only first 100 rows
-            {% endif %}
+                </table>
+                {% else %}
+                <p class="error-text">Failed to execute the query: {{ error }}</span>
+                {% endif %}
+                {% if results|length > 100 %}
+                Show results only first 100 rows
+                {% endif %}
+            </div>
         </div>
     </div>
 </body>

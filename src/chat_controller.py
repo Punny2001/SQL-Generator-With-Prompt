@@ -3,6 +3,7 @@ import logging
 import json
 import os
 
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -21,12 +22,12 @@ class ChatController:
         self.max_tokens = config.max_tokens
     
         self.prepare_messages = self.prepare_messages()
-        
-    def generate_sql_statement(self, messages: list[dict]):
-    
+
+    def generate_response(self, messages: list[dict]):
         if not openai.api_key:
-            logger.error("OpenAI API doesn't existed, please provide an API key.")
-            return None
+            error = "OpenAI API doesn't existed, please provide an API key."
+            logger.error(error)
+            return error
         
         try:
             response = openai.chat.completions.create(
@@ -36,16 +37,19 @@ class ChatController:
                 max_tokens=self.max_tokens
             )
 
-            messages.append({
-                "role": "assistant",
-                "content": response.choices[0].message.content
-            })
-
             return response
 
         except Exception as e:
-            logger.exception(f"An unexpected error while calling an API call: {e}")
+            error = f"An unexpected error while calling an API call: {e}"
+            logger.exception(error)
+            return error
+        
+    def retrieve_sql_statement(self, response):
+        if response:
+            return response.choices[0].message.content
+        else:
             return None
+        
         
     def prepare_messages(self):
 

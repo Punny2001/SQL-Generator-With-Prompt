@@ -14,9 +14,13 @@ class DatabaseController:
         self.password = config.password
         self.database = config.database
 
+        self.conn = None
+
     def get_db_connection(self):
+        if self.conn and not self.conn.closed():
+            return self.conn
         try:
-            connection = psycopg2.connect(
+            self.conn = psycopg2.connect(
                 host = self.host,
                 port = self.port,
                 user = self.user,
@@ -24,15 +28,18 @@ class DatabaseController:
                 dbname = self.database
             )
 
-            return connection
+            print("Database is connected.")
+            return self.conn
 
         except psycopg2.DatabaseError as e:
-            logger.error(f"The database connection was occured an error: {e}")
-            return None
+            error = f"The database connection was occured an error: {e}"
+            logger.error(error)
+            return error
         
         except Exception as e:
-            logger.error(f"An unexpected error while connecting to the database {e} ")
-            return None
+            error = f"An unexpected error while connecting to the database {e} "
+            logger.error(error)
+            return error
 
     def execute_query(self, query: str, include_cols: bool = False):
         conn = None
@@ -40,7 +47,7 @@ class DatabaseController:
         results = None
         
         try:
-            conn = self.get_db_connection()
+            self.conn = self.get_db_connection()
             if conn:
                 cursor = conn.cursor()
                 cursor.execute(query)
@@ -50,8 +57,9 @@ class DatabaseController:
                 results = rows.copy()
 
         except Exception as e:
-            logger.error(f"Database error on executing query '{query}': {e}")
-            return None
+            error = f"Database error on executing query '{query}': {e}"
+            logger.error(error)
+            return error
         
         finally:
             if cursor:
@@ -60,4 +68,9 @@ class DatabaseController:
                 conn.close()
             return results
 
-       
+
+    def close_connection(self):
+        if self.conn and not self.conn.closed:
+            self.conn.close()
+            self.conn = None
+            print("Database connection was closed.")

@@ -69,7 +69,7 @@ def index():
         response = Response.query.get(response_id)
         print(response)
         # print(json.loads(response.choice)['message']['content']) if response else None
-        # query = Utility.clean_unexpected_message(json.loads(response.choice)['message']['content']) if response else ''
+        query = Utility.clean_unexpected_message(json.loads(response.choice)['message']['content']) if response else ''
         query = json.loads(response.choice)['message']['content'] if response else ''
         # print(query)
         if query:
