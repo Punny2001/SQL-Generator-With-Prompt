@@ -14,13 +14,9 @@ class DatabaseController:
         self.password = config.password
         self.database = config.database
 
-        self.conn = None
-
     def get_db_connection(self):
-        if self.conn and not self.conn.closed():
-            return self.conn
         try:
-            self.conn = psycopg2.connect(
+            conn = psycopg2.connect(
                 host = self.host,
                 port = self.port,
                 user = self.user,
@@ -29,7 +25,7 @@ class DatabaseController:
             )
 
             print("Database is connected.")
-            return self.conn
+            return conn
 
         except psycopg2.DatabaseError as e:
             error = f"The database connection was occured an error: {e}"
@@ -46,20 +42,22 @@ class DatabaseController:
         cursor = None
         results = None
         
+        conn = self.get_db_connection()
         try:
-            self.conn = self.get_db_connection()
-            if conn:
-                cursor = conn.cursor()
-                cursor.execute(query)
-                columns = tuple([desc[0] for desc in cursor.description]) if include_cols else None
-                rows = cursor.fetchall()
-                rows.insert(0, columns)
-                results = rows.copy()
+            cursor = conn.cursor()
+            cursor.execute(query)
+            print("Query is successfully fetched")
+            columns = tuple([desc[0] for desc in cursor.description]) if include_cols else None
+            rows = cursor.fetchall()
+            rows.insert(0, columns)
+            results = rows.copy()
 
         except Exception as e:
+            if conn:
+                conn.rollback()
             error = f"Database error on executing query '{query}': {e}"
             logger.error(error)
-            return error
+            results = error
         
         finally:
             if cursor:
@@ -69,8 +67,8 @@ class DatabaseController:
             return results
 
 
-    def close_connection(self):
-        if self.conn and not self.conn.closed:
-            self.conn.close()
-            self.conn = None
-            print("Database connection was closed.")
+    # def close_connection(self):
+    #     if self.conn and not self.conn.closed:
+    #         self.conn.close()
+    #         self.conn = None
+    #         print("Database connection was closed.")

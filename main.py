@@ -11,7 +11,7 @@ database_config = DatabaseConfig()
 chat_controller = ChatController(chat_config)
 database_controller = DatabaseController(database_config)
 
-prepare_messages: list[dict] = chat_controller.prepare_messages
+prepare_messages: list[dict] = chat_controller.prepare_messages(database_type='postgresql')
 
 input_prompt = str(input("Insert your message: "))
 
@@ -20,11 +20,12 @@ prepare_messages.append({
     "content": input_prompt
 })
 
-query = chat_controller.generate_sql_statement(prepare_messages)
+response = chat_controller.generate_response(prepare_messages)
+query = chat_controller.retrieve_sql_statement(response)
 data = database_controller.execute_query(query, include_cols=True)
 
 
-print(f"User Query: {query}")
-print(f"Fetched Data: {data}")
+print(f"Executable Query: {query}")
+# print(f"Fetched Data: {data}")
 # print(type(data))
 # print(data)

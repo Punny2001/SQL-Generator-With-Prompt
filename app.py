@@ -7,7 +7,7 @@ from src.chat_controller import ChatController
 from src.db_controller import DatabaseController
 from src.utils import Utility
 from dotenv import load_dotenv
-import uuid
+import os
 import json
 from datetime import datetime
 
@@ -15,6 +15,7 @@ load_dotenv(override=True)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///response.db"
+app.secret_key=os.getenv('SECRET_KEY')
 db = SQLAlchemy(app)
 
 class Response(db.Model):
@@ -34,16 +35,21 @@ database_controller = DatabaseController(database_config)
 def index():
     query = ""
     results = []
+    prepare_messages = chat_controller.prepare_messages(database_type=database_config.db_type)
 
     if request.method == 'POST':
-        input_prompt = request.form.get("question", "").strip()
-        try:
-            prepare_messages = chat_controller.prepare_messages
-            prepare_messages.append({
-                "role": "user",
-                "content": input_prompt
-            })
-            response = chat_controller.generate_sql_statement(prepare_messages).to_dict()
+        input_prompt = request.form.get("question")
+        prepare_messages.append({
+            "role": "user",
+            "content": input_prompt
+        })
+        response = chat_controller.generate_response(prepare_messages).to_dict()
+        print(response)
+        if "select" not in response['choices'][0]['message']['content'].lower():
+            error = response['choices'][0]['message']['content']
+            flash(f"An unexpected error on prompt, please check error: {error}", 'error')
+            return redirect("/")
+        else:
             new_response = Response(
                 id=response['id'],
                 object=response['object'],
@@ -57,31 +63,28 @@ def index():
                 db.session.add(new_response)
                 db.session.commit()
                 return redirect(f"/?id={new_response.id}")
-            
-            except Exception as e:
-                return str(e), 500
         
-        except Exception as e:
-            return str(e), 500
+            except Exception as e:
+                return redirect("/")
+        
 
     else:
         response_id = request.args.get("id", "")
         response = Response.query.get(response_id)
-        print(response)
-        # print(json.loads(response.choice)['message']['content']) if response else None
-        query = Utility.clean_unexpected_message(json.loads(response.choice)['message']['content']) if response else ''
-        query = json.loads(response.choice)['message']['content'] if response else ''
-        # print(query)
-        if query:
+        query = Utility.clean_unexpected_message(json.loads(response.choice)['message']['content']).strip() if response else ''
+        if query != '':
             try:
-                results = database_controller.execute_query(query, include_cols=True) if query else []
-                return render_template("index.html", query=query, results=results)
+                results = database_controller.execute_query(query, include_cols=True)
+                if isinstance(results, str):
+                    return render_template("index.html", query=query, error_results=results)
+                else:
+                    return render_template("index.html", query=query, results=results)
+                
             except Exception as e:
-                # flash(f"Query error: {str(e)}", "danger")
                 results = []
-                return render_template("index.html", query=query, error=e)
+                return render_template("index.html", query=query, error_results=e)
         else:
-            return render_template("index.html", query=query, results=results)
+            return render_template("index.html")
         
 
 

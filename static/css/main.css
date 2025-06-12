@@ -115,6 +115,7 @@ body {
     margin-bottom: 25px;
 }
 
+
 .results-container {
     background-color: #f8f8f8;
     padding: 15px;
@@ -162,35 +163,7 @@ body {
     font-size: 1rem;
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-        margin: 10px;
-    }
-
-    .title {
-        font-size: 2rem;
-    }
-
-    .subtitle {
-        font-size: 1.5rem;
-    }
-
-    .generate-button {
-        padding: 12px 15px;
-        font-size: 1rem;
-    }
-
-    .textarea-input {
-        font-size: 0.95rem;
-    }
-
-    .code-block, .results-container {
-        padding: 12px;
-    }
-
-    .results-table th, .results-table td {
-        padding: 8px;
-        font-size: 0.85rem;
-    }
+.error-text {
+    color: #dc3545;
+    font-weight: 500;
 }

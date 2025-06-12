@@ -1,0 +1,4 @@
+Generate a SQL query based on the user's question and the provided database schema and table descriptions.
+Adhere strictly to the provided schema and do not use any tables or columns not defined.
+Ensure the SQL query is syntactically correct for {database_type}.
+Do not include any explanations, comments, or additional text, only the SQL query itself.

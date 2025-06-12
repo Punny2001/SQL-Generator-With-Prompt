@@ -2,6 +2,7 @@ import openai
 import logging
 import json
 import os
+from src.utils import Utility
 
 
 logger = logging.getLogger(__name__)
@@ -9,8 +10,10 @@ logger.setLevel(logging.INFO)
 
 CURRENT_PATH = os.getcwd()
 SYSTEM_PROMPT_PATH = f"{CURRENT_PATH}/prompts/system_message.txt"
+BASE_PROMPT_PATH = f"{CURRENT_PATH}/prompts/base_prompt.txt"
+FEW_SHOT_TEMPLATE_PATH= f"{CURRENT_PATH}/prompts/few_shot_template.txt"
 FEW_SHOT_EXAMPLES_PATH = f"{CURRENT_PATH}/prompts/examples/few_shot_examples.json"
-DATA_SCHEMA_PATH = f"{CURRENT_PATH}/data/schema/database_schema.sql"
+DATABASE_SCHEMA_PATH = f"{CURRENT_PATH}/data/schema/database_schema.sql"
 TABLE_DESCRIPTIONS_PATH = f"{CURRENT_PATH}/data/schema/table_descriptions.json"
 
 class ChatController:
@@ -20,8 +23,6 @@ class ChatController:
         self.model_name = config.model_name
         self.temperature = config.temperature
         self.max_tokens = config.max_tokens
-    
-        self.prepare_messages = self.prepare_messages()
 
     def generate_response(self, messages: list[dict]):
         if not openai.api_key:
@@ -51,54 +52,32 @@ class ChatController:
             return None
         
         
-    def prepare_messages(self):
+    def prepare_messages(self, database_type):
 
-        with open(SYSTEM_PROMPT_PATH, "r") as f:
-            system_message = f.read()
+        system_message = Utility.load_text_file(SYSTEM_PROMPT_PATH)
+        database_schema = Utility.load_text_file(DATABASE_SCHEMA_PATH)
+        table_descriptions = Utility.load_json_file(TABLE_DESCRIPTIONS_PATH)
+        base_prompt = Utility.load_text_file(BASE_PROMPT_PATH)
+        few_shot_template = Utility.load_text_file(FEW_SHOT_TEMPLATE_PATH)
+        few_shot_examples = Utility.load_json_file(FEW_SHOT_EXAMPLES_PATH)
 
-            with open(DATA_SCHEMA_PATH, "r") as schema:
-                table_schema = schema.read()
-            
-            with open(TABLE_DESCRIPTIONS_PATH, "r") as desc:
-                table_description_json = json.load(desc)
-                table_description_text = """
-                    Table: {table}
-                    Description: {description}
-                """
-                column_description_text = """
-                    Column Name: {column}
-                    Description: {description}
-                    Possible Value: {example_data}
-                """
-                for table_key, table_value in table_description_json.items():
-                    table_description_text = table_description_text.format(table=table_key, description=table_value['description'])
-                    
-                    column_description_text = "\n".join(
-                        column_description_text.format(
-                            column=col_key, 
-                            description=col_value['description'], 
-                            example_data=", ".join(str(data) for data in col_value['example_data'])
-                            ) 
-                        for col_key, col_value in table_value['columns_name'].items()
-                        )
+        messages = [
+            {"role": "system", "content": system_message.format(database_type=database_type)},
+            {
+                "role": "user", 
+                "content": f"{base_prompt.format(database_type=database_type)}"
+                f"Database Schema:\n```sql\n{database_schema}\n```\n\n"
+                f"Table Descriptions:\n```json\n{json.dumps(table_descriptions, indent=2)}\n```\n\n"
+                f"Few-shot examples:\n"
+            }
+        ]
 
-            system_message = system_message.format(table_schema=table_schema, table_description=table_description_text, column_description=column_description_text)
-
-        with open(FEW_SHOT_EXAMPLES_PATH, "r") as f:
-            few_shot_examples = json.load(f)
-            
-
-        messages: list[dict] = [{"role": "system", "content": system_message}]
+        print(messages)
 
         for example in few_shot_examples:
             messages.append({
                 "role": "user",
-                "content": example['question']
-            })
-
-            messages.append({
-                "role": "assistant",
-                "content": example['query']
+                "content": few_shot_template.format(question=example['question'], query=example['query'])
             })
 
         return messages
