@@ -97,7 +97,9 @@ Show me director and title for first 100 rows
 ```
 
 ### Output
-`SELECT director, title FROM netflix_titles LIMIT 100;`
+```
+SELECT director, title FROM netflix_titles LIMIT 100;
+```
 
 ## Preview
 
