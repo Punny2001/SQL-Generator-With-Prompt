@@ -1,4 +1,4 @@
-# Database Query with Prompt
+# SQL Generator With Prompt
 
 ## Project Description
 
@@ -33,13 +33,19 @@ cd [your-repo-name]
 ```
 
 2. **Create a virtual environment**
-`python3 -m venv venv`
+```
+python3 -m venv venv
+```
 
-3. **Activate the existed virtual environment**
+4. **Activate the existed virtual environment**
 - **On Windows**
-`venv\Scripts\activate`
+```
+venv\Scripts\activate
+```
 - **On Mac**
-`source venv/bin/activate`
+```
+source venv/bin/activate
+```
 
 4. **Install dependencies**
 `pip3 install -r requirements.txt`
@@ -69,22 +75,26 @@ Files to be changed are in the list below:
 
 ## Usage
 1. **Run the Flask application**
-`python3 app.py`
+```
+python3 app.py
+```
 You will see output indicating at the Flase server is running, usually on `http://127.0.0.1:5000/`.
 
-2. **Open in browser**
+3. **Open in browser**
 Navigate to `http://127.0.0.1:5000/` in the web browser.
 
-3. **Enter you question**
+4. **Enter you question**
 Type your natural language sentence to get insights what you want from your data.
 
-4. **Generate SQL**
+5. **Generate SQL**
 Click the "Generate SQL Query" button to retrieve the executable SQL query and given example of the data with maximum 100 rows.
 
 ## Example
 
 ### Input
-`Show me director and title for first 100 rows`
+```
+Show me director and title for first 100 rows
+```
 
 ### Output
 `SELECT director, title FROM netflix_titles LIMIT 100;`
