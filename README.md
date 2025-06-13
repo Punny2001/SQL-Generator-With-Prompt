@@ -1,4 +1,4 @@
-# Database Query with Prompt
+# SQL Generator With Prompt
 
 ## Project Description
 
