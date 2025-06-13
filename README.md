@@ -88,3 +88,9 @@ Click the "Generate SQL Query" button to retrieve the executable SQL query and g
 
 ### Output
 `SELECT director, title FROM netflix_titles LIMIT 100;`
+
+## Preview
+
+![web1](assets/web_1.png)
+
+![web2](assets/web_2.png)
